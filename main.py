@@ -7,10 +7,15 @@ import pandas as pd
 import numpy as np
 
 url = "https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=90"
-resp = requests.get(url)
-data = resp.json()
 
-prices = data["prices"]
+try:
+    resp = requests.get(url)
+    data = resp.json()
+    prices = data["prices"]
+except (requests.RequestException, KeyError) as e:
+    print(e)
+    exit()
+    
 df = pd.DataFrame(prices)
                     
 df.rename(columns={0: 'Timestamp', 1: 'Price'}, inplace=True)
@@ -27,7 +32,7 @@ df['Signal'] = ''
 df.loc[(df['diff_prev'] <= 0) & (df['price_diff'] > 0), 'Signal'] = 'BUY'
 df.loc[(df['diff_prev'] >= 0) & (df['price_diff'] < 0), 'Signal'] = 'SELL'
 
-print(print(df[df['Signal'] != '']))
+print(df[df['Signal'] != ''])
 
 
 
