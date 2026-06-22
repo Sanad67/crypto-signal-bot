@@ -32,32 +32,32 @@ df['Signal'] = ''
 df.loc[(df['diff_prev'] <= 0) & (df['price_diff'] > 0), 'Signal'] = 'BUY'
 df.loc[(df['diff_prev'] >= 0) & (df['price_diff'] < 0), 'Signal'] = 'SELL'
 
-#print(df[df['Signal'] != ''])
-
 capital = 10000
 crypto = 0 
 
 for index, row in df.iterrows():
-
-    if (row['Signal'] == 'BUY') and (crypto == 0):
-        crypto = capital/ row['Price']
-        capital = 0
-    if (row['Signal'] ==  'SELL') and (crypto > 0):
-        capital = crypto * row['Price']
-        crypto = 0
+    row_pos = df.index.get_loc(index)
+    if row_pos + 1 < len(df):
+        fill_price = df['Price'].iloc[row_pos + 1]
+        if (row['Signal'] == 'BUY') and (crypto == 0):
+            crypto = capital/ fill_price
+            capital = 0
+        if (row['Signal'] ==  'SELL') and (crypto > 0):
+            capital = crypto * fill_price
+            crypto = 0
 
 last_price = df['Price'].iloc[-1]
 if crypto > 0:
     capital = crypto * last_price
     crypto = 0 
 
-# Backtest done: $10k -> $8762 on 90d hourly MA3/MA10 crossover (~-12%).
-# Next: fix lookahead (fill on NEXT bar, not signal bar), then add fees.
-
+# Backtest fills on NEXT bar (no lookahead). ~-11% on 90d hourly MA3/MA10.
+# Note: result varies per run — days=90 pulls live data. TODO: snapshot to CSV for reproducibility
 print(f"The crypto is: {crypto}")
 print(f"The capital is: {capital}")     
 
         
+
     
 
 
