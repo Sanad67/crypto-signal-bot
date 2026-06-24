@@ -6,6 +6,9 @@ import requests , json
 import pandas as pd
 import numpy as np
 
+
+'''
+Get request
 url = "https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=90"
 
 try:
@@ -15,13 +18,13 @@ try:
 except (requests.RequestException, KeyError) as e:
     print(e)
     exit()
-    
-df = pd.DataFrame(prices)    
+df = pd.DataFrame(prices)
 df.rename(columns={0: 'Timestamp', 1: 'Price'}, inplace=True)
 df['Timestamp'] = pd.to_datetime(df['Timestamp'], unit = 'ms')
 df = df.set_index('Timestamp')
-
-
+df.to_csv('btc_90d.csv')    
+'''
+df = pd.read_csv('btc_90d.csv', index_col='Timestamp', parse_dates=True)
 #Moving average 
 df["MA3"] = df['Price'].rolling(window = 3).mean()
 df['MA10'] = df['Price'].rolling(window=10).mean()
@@ -59,7 +62,9 @@ if crypto > 0:
 # Backtest fills on NEXT bar (no lookahead). ~-11% on 90d hourly MA3/MA10.
 # Note: result varies per run — days=90 pulls live data. TODO: snapshot to CSV for reproducibility
 print(f"The crypto is: {crypto}")
-print(f"The capital is: {capital}")     
+print(f"The capital is: {capital}")   
+
+#Print all results in a csv file 
 
         
 
