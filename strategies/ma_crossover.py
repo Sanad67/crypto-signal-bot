@@ -13,13 +13,7 @@ class MACrossover(Strategy):
     def name(self) -> str:
         return "MA Crossover"
 
-    """
-    Job A — decide buy/sell/sit-out (this is the strategy):
 
-    the MA3/MA10 columns
-    price_diff, diff_prev
-    the df['Signal'] BUY/SELL assignment
-    """
     def generate_signals (self, data):
 
         #Moving average 
