@@ -10,4 +10,16 @@ class RSIStrategy(Strategy):
         return "RSI"
     
     def generate_signals (self, data):
-        return
+        # Calculate average gain and loss
+        # this is for the average gain and loss 
+        data['delta'] = data['Price'].diff() 
+        data['gain'] = 0.0
+        data['loss'] = 0.0 
+        data.loc[(data['delta'] > 0) , 'gain'] = data['delta']
+        data.loc[(data['delta'] < 0) , 'loss'] = data['delta'].abs()
+
+        avg_gain = data['gain'].rolling(window=self.period).mean()
+        avg_loss = data['loss'].rolling(window=self.period).mean()
+        rs = avg_gain / avg_loss
+        data['RSI'] = 100 - (100 / (1 + rs))
+        print(data['RSI'].describe())
