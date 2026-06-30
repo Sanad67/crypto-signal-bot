@@ -22,4 +22,9 @@ class RSIStrategy(Strategy):
         avg_loss = data['loss'].rolling(window=self.period).mean()
         rs = avg_gain / avg_loss
         data['RSI'] = 100 - (100 / (1 + rs))
-        print(data['RSI'].describe())
+
+        data['Signal'] = 0
+        data.loc[(data['RSI'] >=70 ), 'Signal'] = -1
+        data.loc[(data['RSI'] <=30 ), 'Signal'] =  1
+        
+        return data["Signal"]
